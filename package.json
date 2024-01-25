@@ -1,14 +1,16 @@
 {
   "type": "module",
-  "scripts": {
-    "dev": "vite-node src/main.js"
-  },
+  "name": "trading-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/WhoIsStanley/trading-bot.git",
+  "author": "WhoIsStanley <stanleychan246@gmail.com>",
+  "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.10.2",
-    "dotenv": "^16.0.3",
-    "fast-glob": "^3.2.12",
-    "pinia": "^2.0.35",
-    "vite-node": "^0.30.1",
-    "vue": "^3.2.47"
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.1"
+  },
+  "scripts": {
+    "dev": "node src/index.js"
   }
 }
