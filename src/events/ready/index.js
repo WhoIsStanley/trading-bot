@@ -2,7 +2,7 @@ import { Events } from "discord.js"
 
 export const event = {
     name: Events.ClientReady,
-    //client.once or client.on
+    // client.once = 1 or client.on = 0
     once: true
 }
 
