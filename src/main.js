@@ -1,16 +1,15 @@
-// Require the necessary discord.js classes
-import { Client, Events, GatewayIntentBits } from 'discord.js'
-import dotenv from 'dotenv'
-import vueinit from '@/core/vue.js'
-import { loadCommands } from '@/core/loader'
+// libaray
+import { Client, Events, GatewayIntentBits } from 'discord.js';
+import vueinit from '@/core/vue';
+import dotenv from 'dotenv';
+import { loadCommands, loadEvents } from '@/core/loader';
 import { useAppStore } from '@/store/app';
 
-loadCommands()
+vueinit();
+dotenv.config();
 
-// init dotenv, vue, pinia
-dotenv.config()
-vueinit()
-
+//start loader1
+loadCommands();
 
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });

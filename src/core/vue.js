@@ -1,8 +1,8 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createApp } from "vue";
+import { createPinia } from 'pinia';
 
-export default () => {
-    
+export default() => {
+    console.log('Vueinit')
     const vue = createApp({})
     const pinia = createPinia()
 
