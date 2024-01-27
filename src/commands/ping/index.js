@@ -7,5 +7,5 @@ export const command = new SlashCommandBuilder()
 
 //fixing about ping value reaction
 export const action = async(interaction) => {
-    interaction.reply('Bot is ready to use!');
+    interaction.reply('Bot ready to use!');
 }

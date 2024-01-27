@@ -28,17 +28,19 @@ export const loadCommands = async() => {
     const actions = new Collection();
 
     const files = await fg('./src/commands/**/index.js')
-    
+
     for(const file of files){
         const cmd = await import(file)
         commands.push(cmd.command)
         actions.set(cmd.command.name, cmd.action)
+        console.log(cmd.command)
     }
 
     await updateSlashCommands(commands)
     appStore.commandActionMap = actions
-
-    // console.log(appStore.commandActionMap)
+    //console.log(commands)
+    console.log('\nAction map:')
+    console.log(appStore.commandActionMap)
 }
 
 // Upload 'events/**/index.js' (events & action) to updateSlashCommands
