@@ -22,6 +22,9 @@ const webclawer = async(inputname, timeinterval) => {
     const page = await browser.newPage();
     try {
         await page.goto(`https://www.tradingview.com/chart/?symbol=${inputname}`, {waitUntil: 'networkidle0'});
+        await page.click('body > div.js-rootresizer__contents.layout-with-border-radius > div.layout__area--topleft > div > div > div > div')
+        await page.click('#theme-switcher')
+        await page.click('body > div.js-rootresizer__contents.layout-with-border-radius > div.layout__area--topleft > div > div > div > div')
         await page.click('#header-toolbar-intervals > button')
         await page.click(time.get(timeinterval))
         await page.setViewport({width: 1080*1.5, height: 1024});
