@@ -3,7 +3,7 @@ from discord.ext import commands, tasks
 from datetime import datetime
 import yfinance as yf
 import asyncio
-from alert_update import alerts, save_alerts, load_alerts
+from alert_update import alerts, save_alerts
 
 class AlertTask(commands.Cog):
     def __init__(self, bot):

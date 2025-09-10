@@ -3,7 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 import yfinance as yf
 from datetime import datetime
-from alert_update import alerts, save_alerts, load_alerts
+from alert_update import alerts, save_alerts
 
 class AlertCog(commands.Cog):
     def __init__(self, bot):
