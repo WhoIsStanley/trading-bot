@@ -1,5 +1,4 @@
-node_modules
-yarn.lock
-*.env
-trading-bot.code-workspace
-screenshot
+.gitignore
+.env
+test.py
+alerts.json
