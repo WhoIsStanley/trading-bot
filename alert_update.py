@@ -1,4 +1,28 @@
 import json, os
+import requests
+
+def yahoo_search(query, count=5):
+    url = "https://query2.finance.yahoo.com/v1/finance/search"
+    params = {"q": query, "quotesCount": count, "newsCount": 0}
+    headers = {"User-Agent": "Mozilla/5.0"}  
+    
+    resp = requests.get(url, params=params, headers=headers)
+    
+    try:
+        data = resp.json()
+    except Exception:
+        print("Response not JSON:", resp.text[:200])
+        raise
+    
+    results = []
+    for item in data.get("quotes", []):
+        results.append({
+            "symbol": item.get("symbol"),
+            "shortname": item.get("shortname"),
+            "exchange": item.get("exchDisp"), 
+            "type": item.get("typeDisp") 
+        })
+    return results
 
 ALERTS_FILE = "alerts.json"
 alerts = {}

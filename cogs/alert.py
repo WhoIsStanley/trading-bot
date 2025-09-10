@@ -3,7 +3,73 @@ from discord import app_commands
 from discord.ext import commands
 import yfinance as yf
 from datetime import datetime
-from alert_update import alerts, save_alerts
+from alert_update import alerts, save_alerts, yahoo_search
+
+class YahooSearchView(discord.ui.View):
+    def __init__(self, results, user, operator, value, end_date):
+        super().__init__(timeout=30)
+        self.results = results
+        self.user = user
+        self.operator = operator
+        self.value = value
+        self.end_date = end_date
+
+        # Create one button per search result
+        for r in results:
+            label = f"{r['symbol']} - {r.get('shortname','')}"
+            self.add_item(
+                discord.ui.Button(
+                    label=label[:80],  # Discord max = 80 chars
+                    style=discord.ButtonStyle.primary,
+                    custom_id=r["symbol"]
+                )
+            )
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user != self.user:
+            await interaction.response.send_message("This menu is not for you.", ephemeral=True)
+            return False
+
+        chosen_symbol = interaction.data["custom_id"]
+        match = next((r for r in self.results if r["symbol"] == chosen_symbol), None)
+        if not match:
+            return False
+
+        # Save alert when user picks a symbol
+        from alert_update import alerts, save_alerts  # import here to avoid circular issues
+        alert_data = {
+            "ticker": match["symbol"].upper(),
+            "operator": self.operator,
+            "value": float(self.value),
+            "end_date": self.end_date.strftime("%Y-%m-%d") if self.end_date else None,
+            "channel": interaction.channel.id,
+            "user_id": interaction.user.id
+        }
+        alerts.setdefault(str(interaction.channel.id), []).append(alert_data)
+        save_alerts(alerts)
+
+        await interaction.response.edit_message(
+            content=f":rotating_light: Alert set for <@{interaction.user.id}>: "
+                    f"**{match.get('shortname', match['symbol'])} ({match['symbol']})** "
+                    f"{self.operator} {self.value} until {self.end_date or 'no limit'}",
+            embed=None,
+            view=None
+        )
+        self.stop()
+        return True
+
+    @discord.ui.button(label="Cancel", style=discord.ButtonStyle.danger)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if interaction.user != self.user:
+            await interaction.response.send_message("This menu is not for you.", ephemeral=True)
+            return
+        await interaction.response.edit_message(content=":exclamation: Alert creation canceled.", view=None)
+        self.stop()
+
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+
 
 class AlertCog(commands.Cog):
     def __init__(self, bot):
@@ -17,15 +83,39 @@ class AlertCog(commands.Cog):
             try:
                 end_dt = datetime.strptime(end_date, "%Y-%m-%d")
             except ValueError:
-                await interaction.response.send_message("Invalid date format. Use YYYY-MM-DD.")
+                await interaction.response.send_message(":x: Invalid date format. Use YYYY-MM-DD.", ephemeral=True)
                 return
 
+        company_name = None
         try:
             info = yf.Ticker(ticker).info
+            # Detect the "useless dict" case
+            if not info or list(info.keys()) == ["trailingPegRatio"]:
+                raise ValueError("Invalid ticker response from yfinance")
+
             company_name = info.get("longName", ticker.upper())
         except Exception:
-            company_name = ticker.upper()
+            # Fallback to Yahoo search
+            results = yahoo_search(ticker, count=5)
+            if not results:
+                await interaction.response.send_message(f":x: Could not find ticker `{ticker}`.", ephemeral=True)
+                return
 
+            # Show user options
+            embed = discord.Embed(
+                title="Did you mean one of these?",
+                description="\n".join(
+                    [f"**{r['symbol']}** - {r.get('shortname','')} ({r['exchange']}, {r['type']})"
+                    for r in results]
+                ),
+                color=discord.Color.orange()
+            )
+            view = YahooSearchView(results, interaction.user, operator, value, end_dt)
+
+            await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+            return
+
+        # Save alert directly if ticker was valid
         alert_data = {
             "ticker": ticker.upper(),
             "operator": operator,
@@ -36,45 +126,13 @@ class AlertCog(commands.Cog):
         }
 
         alerts.setdefault(str(interaction.channel_id), []).append(alert_data)
-        save_alerts()
+        save_alerts(alerts)
 
         await interaction.response.send_message(
-            f"Alert set for <@{interaction.user.id}>: **{company_name} ({ticker.upper()})** {operator} {value} until {end_date or 'no limit'}"
+            f":rotating_light: Alert set for <@{interaction.user.id}>: **{company_name} ({ticker.upper()})** "
+            f"{operator} {value} until {end_date or 'no limit'}"
         )
 
-    @commands.command(name="alert")
-    async def set_alert(self, ctx, ticker: str, operator: str, value: float, end_date: str = None):
-        end_dt = None
-        if end_date:
-            try:
-                end_dt = datetime.strptime(end_date, "%Y-%m-%d")
-            except ValueError:
-                await ctx.send("Invalid date format. Use YYYY-MM-DD.")
-                return
-        
-        # Try to fetch company name
-        try:
-            info = yf.Ticker(ticker).info
-            company_name = info.get("longName", ticker.upper())
-        except Exception:
-            company_name = ticker.upper()
-
-        alert_data = {
-            "ticker": ticker.upper(),
-            "operator": operator,
-            "value": float(value),
-            "end_date": end_dt.strftime("%Y-%m-%d") if end_dt else None,
-            "channel": ctx.channel.id,
-            "user_id": ctx.author.id
-        }
-
-        alerts.setdefault(str(ctx.channel.id), []).append(alert_data)
-        save_alerts()
-
-        await ctx.send(
-            f"Alert set for <@{ctx.author.id}>: **{company_name} ({ticker.upper()})** {operator} {value} until {end_date or 'no limit'}"
-        )
-    
 
 async def setup(bot):
     await bot.add_cog(AlertCog(bot))

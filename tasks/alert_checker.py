@@ -13,7 +13,7 @@ class AlertTask(commands.Cog):
     def cog_unload(self):
         self.check_alerts.cancel()
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=30)
     async def check_alerts(self):
         now = datetime.now()
 
@@ -38,7 +38,7 @@ class AlertTask(commands.Cog):
                         continue
 
                     # Fetch latest price
-                    data = yf.download(ticker, period="1d", interval="1m")
+                    data = yf.download(ticker, period="1d", interval="1m", prepost=True)
                     if data.empty:
                         continue
 
