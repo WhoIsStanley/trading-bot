@@ -58,7 +58,7 @@ class AlertTask(commands.Cog):
                             company_name = ticker
 
                         await channel.send(
-                            f"<@{user_id}> Alert! **{company_name} ({ticker})** "
+                            f":bangbang: <@{user_id}> Alert! **{company_name} ({ticker})** "
                             f"is {last_price:.2f} ({operator} {value})"
                         )
 

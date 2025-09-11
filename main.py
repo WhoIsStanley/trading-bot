@@ -8,7 +8,7 @@ load_dotenv()
 
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix="!", intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents, help_command=None)
 tree = bot.tree
 
 async def load_cog():
@@ -28,8 +28,8 @@ async def on_ready():
     print(f"Logged in as {bot.user}")
     load_alerts()
     await load_cog()
-    synced = await tree.sync(guild=discord.Object(id=os.getenv("GULID_ID")))
-    print(f"Synced {len(synced)} global slash commands")
+    await tree.sync(guild=discord.Object(id=os.getenv("GULID_ID")))
+    print(f"Synced global slash commands")
     print("Ready!")
 
 bot.run(os.getenv("TOKEN"))

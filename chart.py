@@ -1,36 +1,16 @@
 import yfinance as yf
 import mplfinance as mpf
 import pandas as pd
-import requests
 
-def yahoo_search(query, count=5):
-    url = "https://query2.finance.yahoo.com/v1/finance/search"
-    params = {"q": query, "quotesCount": count, "newsCount": 0}
-    headers = {"User-Agent": "Mozilla/5.0"}  
-    
-    resp = requests.get(url, params=params, headers=headers)
-    
-    try:
-        data = resp.json()
-    except Exception:
-        print("Response not JSON:", resp.text[:200])
-        raise
-    
-    results = []
-    for item in data.get("quotes", []):
-        results.append({
-            "symbol": item.get("symbol"),
-            "shortname": item.get("shortname"),
-            "exchange": item.get("exchDisp"), 
-            "type": item.get("typeDisp") 
-        })
-    return results
-ticker="388"
-info = yf.Ticker(ticker).info
-company_name = info.get("longName", ticker.upper())
-print(f"{info} and {company_name}")
-print(yahoo_search("VOOO"))
+info = yf.Ticker("VOO").info
+logo_url = info.get("logo_url")
 
+if not logo_url and "website" in info:
+    domain = info["website"].split("/")[2]  # extract domain
+    logo_url = f"https://logo.clearbit.com/{domain}"
+
+print(logo_url)
+print(info)
 
 """
 binance_dark = {

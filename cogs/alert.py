@@ -36,7 +36,6 @@ class YahooSearchView(discord.ui.View):
             return False
 
         # Save alert when user picks a symbol
-        from alert_update import alerts, save_alerts  # import here to avoid circular issues
         alert_data = {
             "ticker": match["symbol"].upper(),
             "operator": self.operator,
@@ -46,7 +45,7 @@ class YahooSearchView(discord.ui.View):
             "user_id": interaction.user.id
         }
         alerts.setdefault(str(interaction.channel.id), []).append(alert_data)
-        save_alerts(alerts)
+        save_alerts()
 
         await interaction.response.edit_message(
             content=f":rotating_light: Alert set for <@{interaction.user.id}>: "

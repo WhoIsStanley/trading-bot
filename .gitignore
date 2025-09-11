@@ -1,4 +1,4 @@
-.gitignore
+
 .env
-test.py
 alerts.json
+help.py

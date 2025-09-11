@@ -7,7 +7,7 @@ class DeleteCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    #Slash Command
+    # Slash Command
     @app_commands.command(name="delete", description="Delete one of your alerts by ID")
     async def delete_alert(self, interaction: discord.Interaction, alert_id: int):
         user_id = interaction.user.id
@@ -29,7 +29,7 @@ class DeleteCog(commands.Cog):
             f"Deleted alert: {removed['ticker']} {removed['operator']} {removed['value']}"
         )
     
-    #Prefix
+    # Prefix
     @commands.command(name="delete")
     async def delete_alert_prefix(self, ctx, alert_id: int):
         """Delete one of your alerts by ID (use !myalerts to see IDs)"""
