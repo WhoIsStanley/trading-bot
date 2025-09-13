@@ -6,25 +6,41 @@ A Discord bot for tracking stock information and creating alerts. This bot uses 
 
 ## Latest Updates
 
-**Version 1.0** - September 2025
+**Version 1.1** - September 2025
 
-### Add Stock Command
-- Users can search for stock tickers with the bot.
-- Interactive buttons (**YahooSearchView**) display search results.
-- Buttons fetch **live stock data** using `yfinance` when clicked.
-- Embed safely handles missing fields:
-  - Shows `N/A` if price, change, or percentage change is unavailable.
-- Fixed file attachment issues in message edits:
-  - Use `attachments=[file]` instead of `file=file`.
-- Timeout behavior improved:
-  - Buttons are **greyed out** after 30 seconds.
-  - Disabled buttons are reflected in the original message.
+## Features
 
-### Finishing Alert Command
-- Users can **complete or cancel alerts** after creation.
-- Canceling an alert disables the interactive menu and shows a confirmation message.
-- Only the user who created the alert can interact with the menu to prevent others from interfering.
-- Ensures safe handling of any files or embeds associated with the alert.
+### Stock Commands
+- **Interactive Stock Search**
+  - If a ticker is invalid, the bot shows a search menu with buttons to select the correct stock.
+- **Pre/Post Market Handling**
+  - Automatically shows pre-market or post-market prices when available.
+- **Stock Embed Details**
+  - Current Price  
+  - Price Change & %  
+  - Volume  
+  - Open / Previous Close  
+  - 52-week High / Low  
+  - P/E Ratio & EPS  
+
+---
+
+### Alerts
+- Custom alert system for stocks.
+- Set alerts for specific price thresholds or percentage changes.
+- Receive notifications directly in Discord when conditions are met.
+- Multiple alerts per stock supported.
+- Cancel, edit, or view existing alerts via Discord commands.
+
+---
+
+### Help Command
+- A **new help command** lists all available commands in a neat embed.
+
+---
+
+## Bug Fixes
+- Clicking the **Cancel button** on interactive embeds now properly closes the embed and disables buttons.
 
 ## Source / References
 - **Discord.py** - [https://discordpy.readthedocs.io/](https://discordpy.readthedocs.io/)

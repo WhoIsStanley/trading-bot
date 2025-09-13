@@ -28,8 +28,10 @@ async def on_ready():
     print(f"Logged in as {bot.user}")
     load_alerts()
     await load_cog()
-    await tree.sync(guild=discord.Object(id=os.getenv("GULID_ID")))
-    print(f"Synced global slash commands")
+    #sync = await tree.sync(guild=discord.Object(id=os.getenv("GUILD_ID")))
+    #print(f"Synced {len(sync)} commands: {[cmd.name for cmd in sync]}")
+    sync = await tree.sync()
+    print(f"Synced {len(sync)} commands globally")
     print("Ready!")
 
 bot.run(os.getenv("TOKEN"))

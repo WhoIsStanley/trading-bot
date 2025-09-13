@@ -106,6 +106,7 @@ class YahooSearchView(discord.ui.View):
             if interaction.user != self.user:
                 await interaction.response.send_message("This menu is not for you.", ephemeral=True)
                 return
+            
             info = yf.Ticker(result['symbol']).info
             embed,file = embed_maker(info,result['symbol'])
 
@@ -119,7 +120,7 @@ class YahooSearchView(discord.ui.View):
         if interaction.user != self.user:
             await interaction.response.send_message("This menu is not for you.", ephemeral=True)
             return
-        await interaction.response.edit_message(content=":exclamation: Alert creation canceled.", view=None)
+        await interaction.response.edit_message(content=":exclamation: Stock creation canceled.", embed=None, view=None)
         self.stop()
 
     async def on_timeout(self):
@@ -134,6 +135,9 @@ class StockCog(commands.Cog):
     # Slash command
     @app_commands.command(name="stock", description="Finding stock information")
     async def stock_price_slash(self, interaction: discord.Interaction, ticker: str):
+        if not ticker:
+            await interaction.response.send_message(":x: You need to provide a ticker.")
+            return
         await self.handle_stock(interaction, ticker, slash=True)
 
     # Prefix command
@@ -148,7 +152,7 @@ class StockCog(commands.Cog):
     async def handle_stock(self, source, ticker: str, slash: bool):
         try:
             info = yf.Ticker(ticker).info
-            if not info or list(info.keys()) == ["trailingPegRatio"]:
+            if not info or list(info.keys()) == ["trailingPegRatio"] or not info.get("regularMarketPrice"):
                 raise ValueError("Invalid ticker response from yfinance")
         except Exception:
             results = yahoo_search(ticker, count=5)

@@ -1,4 +1,5 @@
-
 .env
 alerts.json
-help.py
+chart.py
+dark_style.json
+test.py

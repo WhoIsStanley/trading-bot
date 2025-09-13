@@ -62,7 +62,7 @@ class YahooSearchView(discord.ui.View):
         if interaction.user != self.user:
             await interaction.response.send_message("This menu is not for you.", ephemeral=True)
             return
-        await interaction.response.edit_message(content=":exclamation: Alert creation canceled.", view=None)
+        await interaction.response.edit_message(content=":exclamation: Alert creation canceled.", embed=None, view=None)
         self.stop()
 
     async def on_timeout(self):
@@ -89,7 +89,7 @@ class AlertCog(commands.Cog):
         try:
             info = yf.Ticker(ticker).info
             # Detect the "useless dict" case
-            if not info or list(info.keys()) == ["trailingPegRatio"]:
+            if not info or list(info.keys()) == ["trailingPegRatio"] or not info.get("regularMarketPrice"):
                 raise ValueError("Invalid ticker response from yfinance")
 
             company_name = info.get("longName", ticker.upper())
