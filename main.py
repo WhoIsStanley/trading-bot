@@ -1,7 +1,7 @@
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
-from alert_update import load_alerts
+from utils import load_alerts
 import os
 
 load_dotenv()

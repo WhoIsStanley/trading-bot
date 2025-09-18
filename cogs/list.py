@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from alert_update import alerts
+from utils import alerts
 
 class Paginator(discord.ui.View):
     def __init__(self, entries, per_page=10):

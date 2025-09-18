@@ -1,5 +1,5 @@
 .env
+__pycache__
+*.png
 alerts.json
-chart.py
-dark_style.json
 test.py

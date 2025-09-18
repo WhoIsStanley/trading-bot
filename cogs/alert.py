@@ -3,7 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 import yfinance as yf
 from datetime import datetime
-from alert_update import alerts, save_alerts, yahoo_search
+from utils import alerts, save_alerts, yahoo_search
 
 class YahooSearchView(discord.ui.View):
     def __init__(self, results, user, operator, value, end_date):

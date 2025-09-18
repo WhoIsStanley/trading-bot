@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from alert_update import alerts, save_alerts
+from utils import alerts, save_alerts
 
 class DeleteCog(commands.Cog):
     def __init__(self, bot):

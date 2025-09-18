@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import yfinance as yf
-from alert_update import yahoo_search
+from utils import yahoo_search
 import os
 
 def logo_finder(info):
