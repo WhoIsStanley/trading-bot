@@ -150,6 +150,8 @@ class StockCog(commands.Cog):
 
     # Shared logic
     async def handle_stock(self, source, ticker: str, slash: bool):
+        if slash:
+            await source.response.defer(ephemeral=True)
         try:
             info = yf.Ticker(ticker).info
             if not info or list(info.keys()) == ["trailingPegRatio"] or not info.get("regularMarketPrice"):
@@ -158,7 +160,7 @@ class StockCog(commands.Cog):
             results = yahoo_search(ticker, count=5)
             if not results:
                 if slash:
-                    await source.response.send_message(f":x: Could not find ticker `{ticker}`.", ephemeral=True)
+                    await source.followup.send(f":x: Could not find ticker `{ticker}`.", ephemeral=True)
                 else:
                     await source.send(f":x: Could not find ticker `{ticker}`.")
                 return
@@ -174,7 +176,7 @@ class StockCog(commands.Cog):
             view = YahooSearchView(results, source.user if slash else source.author)
 
             if slash:
-                await source.response.send_message(embed=embed, view=view, ephemeral=True)
+                await source.followup.send(embed=embed, view=view, ephemeral=True)
             else:
                 await source.send(embed=embed, view=view)
             return
@@ -182,7 +184,7 @@ class StockCog(commands.Cog):
         embed, file = embed_maker(info,ticker)
 
         if slash:
-            await source.response.send_message(embed=embed, ephemeral=True, file=file)
+            await source.followup.send(embed=embed, ephemeral=True, file=file)
         else:
             await source.send(embed=embed,file=file)
 

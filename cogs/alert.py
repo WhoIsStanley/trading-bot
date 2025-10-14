@@ -77,12 +77,13 @@ class AlertCog(commands.Cog):
     # Slash command
     @app_commands.command(name="alert", description="Set a stock alert")
     async def set_alert(self, interaction: discord.Interaction, ticker: str, operator: str, value: float, end_date: str = None):
+        await interaction.response.defer(ephemeral=True)
         end_dt = None
         if end_date:
             try:
                 end_dt = datetime.strptime(end_date, "%Y-%m-%d")
             except ValueError:
-                await interaction.response.send_message(":x: Invalid date format. Use YYYY-MM-DD.", ephemeral=True)
+                await interaction.followup.send(":x: Invalid date format. Use YYYY-MM-DD.", ephemeral=True)
                 return
 
         company_name = None
@@ -97,7 +98,7 @@ class AlertCog(commands.Cog):
             # Fallback to Yahoo search
             results = yahoo_search(ticker, count=5)
             if not results:
-                await interaction.response.send_message(f":x: Could not find ticker `{ticker}`.", ephemeral=True)
+                await interaction.followup.send(f":x: Could not find ticker `{ticker}`.", ephemeral=True)
                 return
 
             # Show user options
@@ -111,7 +112,7 @@ class AlertCog(commands.Cog):
             )
             view = YahooSearchView(results, interaction.user, operator, value, end_dt)
 
-            await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
+            await interaction.followup.send(embed=embed, view=view, ephemeral=True)
             return
 
         # Save alert directly if ticker was valid
@@ -127,7 +128,7 @@ class AlertCog(commands.Cog):
         alerts.setdefault(str(interaction.channel_id), []).append(alert_data)
         save_alerts(alerts)
 
-        await interaction.response.send_message(
+        await interaction.followup.send(
             f":rotating_light: Alert set for <@{interaction.user.id}>: **{company_name} ({ticker.upper()})** "
             f"{operator} {value} until {end_date or 'no limit'}"
         )

@@ -1,0 +1,36 @@
+{
+    "123456789": [
+        {
+            "config_id": 0,
+            "period": "9mo",
+            "interval": "1d",
+            "volume": true,
+            "rsi": false,
+            "macd": false,
+            "sma_periods": null
+        },
+        {
+            "period": "9mo",
+            "interval": "1d",
+            "volume": true,
+            "rsi": true,
+            "macd": false,
+            "sma_periods": [
+                10,
+                50
+            ],
+            "config_id": 1
+        },
+        {
+            "config_id": 2,
+            "period": "9mo",
+            "interval": "1d",
+            "volume": true,
+            "rsi": true,
+            "macd": false,
+            "sma_periods": [
+                20
+            ]
+        }
+    ]
+}
