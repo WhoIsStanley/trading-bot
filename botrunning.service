@@ -1,0 +1,16 @@
+[Unit]
+Description=booting discord bot app
+After=network.target
+
+[Service]
+EnvironmentFile=/home/scpi/trading-bot/.env
+ExecStart=/bin/bash -c 'source /home/scpi/miniconda3/etc/profile.d/conda.sh && conda activate dc_env && python /home/scpi/trading-bot/main.py'
+WorkingDirectory=/home/scpi/trading-bot
+Restart=always
+RestartSec=5
+User=scpi
+StandardOutput=append:/home/scpi/trading-bot/data/log/trading-bot.log
+StandardError=append:/home/scpi/trading-bot/data/log/trading-bot.err
+
+[Install]
+WantedBy=multi-user.target
